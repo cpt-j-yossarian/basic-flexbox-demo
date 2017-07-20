@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        * { font-family: 'Arial'; }
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .wrapper {
+            width: 70vw;
+            height: 100vh;
+            float: left;
+        }
+
+        .sidebar {
+            width: 30vw;
+            height: 100vh;
+            float: right;
+            background-color: #555;
+            border-left: 8px solid black;
+            color: #eee;
+            box-sizing: border-box;
+            padding: 1em;
+            overflow: scroll;
+        }
+
+        .flex-container{
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .flex-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            width: 100px;
+            font-size: 2em;
+            color: #eee;
+        }
+
+        .item-1 { background-color: #a00; }
+        .item-2 { background-color: #0a0; }
+        .item-3 { background-color: #00a; }
+        .item-4 { background-color: #aa0; }
+        .item-5 { background-color: #a0a; }
+
+
+        /* Sidebar Controls */
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .button-container a {
+           padding: 0.5em 1em;
+           margin: 0.5em;
+
+           background-color: #eee;
+           color: #333;
+           transition: 0.15s;
+           cursor: pointer;
+        }
+
+        .button-container a.active {
+            outline: #e4bd13 3px solid;
+            transition: 0.15s;
+        }
+
+        /* Inputs */
+
+        .inputs-flex {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .inputs-flex div {
+            display: flex;
+            flex-direction: column;
+        }
+
+    </style>
+
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="flex-container">
+            <div class="flex-item item-1">1</div>
+            <div class="flex-item item-2">2</div>
+            <div class="flex-item item-3">3</div>
+            <div class="flex-item item-4">4</div>
+            <div class="flex-item item-5">5</div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <h3>Flex Container:</h3>
+
+        <div>
+            <h4>Flex Direction:</h4>
+            <div class="button-container flex-direction">
+                <a onclick="changeProperty('flexDirection', 'row')" data-prop="direction" class="active">row</a>
+                <a onclick="changeProperty('flexDirection', 'row-reverse')" data-prop="direction">row-reverse</a>
+                <a onclick="changeProperty('flexDirection', 'column')" data-prop="direction">column</a>
+                <a onclick="changeProperty('flexDirection', 'column-reverse')" data-prop="direction">column-reverse</a>
+            </div>
+        </div>
+
+        <div>
+            <h4>Justify Content:</h4>
+            <div class="button-container">
+                <a onclick="changeProperty('justifyContent', 'flex-start')" data-prop="justify" class="active">flex-start</a>
+                <a onclick="changeProperty('justifyContent', 'flex-end')" data-prop="justify">flex-end</a>
+                <a onclick="changeProperty('justifyContent', 'space-around')" data-prop="justify">space-around</a>
+                <a onclick="changeProperty('justifyContent', 'space-between')" data-prop="justify">space-between</a>
+                <a onclick="changeProperty('justifyContent', 'baseline')" data-prop="justify">baseline</a>
+            </div>
+        </div>
+
+        <div>
+            <h4>Align Items:</h4>
+            <div class="button-container">
+                <a onclick="changeProperty('alignItems', 'flex-start')" class="active" data-prop="align">flex-start</a>
+                <a onclick="changeProperty('alignItems', 'flex-end')" data-prop="align">flex-end</a>
+                <a onclick="changeProperty('alignItems', 'center')" data-prop="align">center</a>
+                <a onclick="changeProperty('alignItems', 'stretch')" data-prop="align">stretch</a>
+                <a onclick="changeProperty('alignItems', 'baseline')" data-prop="align">baseline</a>
+            </div>
+        </div>
+
+        <div>
+            <h4>Flex Wrap:</h4>
+            <div class="button-container">
+                <a onclick="changeProperty('flexWrap', 'nowrap')" class="active" data-prop="wrap">nowrap</a>
+                <a onclick="changeProperty('flexWrap', 'wrap')" data-prop="wrap">wrap</a>
+                <a onclick="changeProperty('flexWrap', 'wrap-reverse')" data-prop="wrap">wrap-reverse</a>
+            </div>
+        </div>
+        <h3>Flex Items:</h3>
+
+        <h5>Press enter to make changes take affect!</h5>
+        <div class="inputs-flex">
+            <div>
+                <label>Width:</label>
+                <input id="width" type="number" data-size="width" value="100">
+            </div>
+
+            <div>
+                <label for="height">Height:</label>
+                <input id="height" type="number" data-size="height" value="100">
+            </div>
+        </div>
+
+        <div class="item-template">
+            <h3>Item {{i}}</h3>
+            <div class="inputs-flex">
+                <div>
+                    <label>Flex Grow:</label>
+                    <input type="number" data-grow data-item="{{i}}" value="0">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        let flexContainer = document.querySelector('.flex-container');
+
+        let changeProperty = (property, value) => {
+            flexContainer.style[property] = value;
+        }
+
+        let buttons = document.querySelectorAll('.button-container a');
+
+        for (let button of buttons) {
+            button.addEventListener('click', (event) => {
+                let grouping = event.target.dataset.prop;
+                let groupItems = document.querySelectorAll('[data-prop="' + grouping +'"]');
+                for (let item of groupItems) {
+                    item.classList.remove('active');
+                }
+
+                event.target.classList.add('active');
+            }, false);
+        }
+
+        let inputs = document.querySelectorAll('[data-size]');
+
+        for (let input of inputs) {
+            input.addEventListener('keyup', (event) => {
+                if (event.code !== 'Enter') {
+                    return;
+                }
+
+                let property = event.target.dataset.size;
+                let newSize = event.target.value + 'px';
+
+                let flexItems = document.querySelectorAll('.flex-item');
+
+                for (let item of flexItems) {
+                    item.style[property] = newSize;
+                }
+            }, false);
+        }
+
+        let itemTemplateContainer = document.querySelector('.item-template')
+        let itemTemplate = itemTemplateContainer.innerHTML;
+        itemTemplateContainer.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            itemTemplateContainer.innerHTML += itemTemplate.replace(/\{\{i\}\}/g, i);
+        }
+
+        let flexGrowInputs = document.querySelectorAll('[data-grow]');
+
+        for (let input of flexGrowInputs) {
+            input.addEventListener('keyup', (event) => {
+                if (event.code !== 'Enter') {
+                    return;
+                }
+
+                let amount = event.target.value;
+                let target = event.target.dataset.item;
+
+                document.querySelector('.item-' + target).style.flexGrow = amount;
+            })
+        }
+    </script>
+</body>
